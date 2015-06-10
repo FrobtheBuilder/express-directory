@@ -1,0 +1,21 @@
+doctype html
+html(lang="en")
+	head
+		include ../inc/head.jade
+	body
+		include ../inc/nav.jade
+		.container
+			.col-xs-4
+			.col-xs-4
+				form(action="/login", method="get")
+					.form-group
+						input.form-control(type="text", placeholder="Username")
+					.form-group
+						input.form-control(type="text", placeholder="Email")
+					.form-group
+						input.form-control(type="password", placeholder="Password")
+					.form-group
+						input.form-control(type="password", placeholder="Confirm Password")
+					.form-group
+						input.form-control.btn.btn-success(type="submit", value="Register")
+			.col-xs-4
