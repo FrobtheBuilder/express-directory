@@ -12,10 +12,13 @@ router.get '/register', (req, res) ->
 router.post '/', (req, res) ->
 	b = req.body
 
-	if not (b.username.length > 0 and b.email.length > 0 and util.emailRegex.test b.email and b.password is b.confirm)
+	unless b.username.length > 0 and
+	b.email.length > 0 and
+	#util.emailRegex.test b.email and
+	b.password is b.confirm
 		res.render 'message',
 						page: "Failure"
-						bad: true
+						type: "bad"
 						message: "Invalid input"
 						link: "#{viewDir}/register"
 						label: "Return"
@@ -27,6 +30,36 @@ router.post '/', (req, res) ->
 										password: util.hash.toSHA1 req.body.password
 										pictures: []
 	u = req.session.user
+
+	u.save (err) ->
+		if err
+			res.render 'message',
+							page: "Failure"
+							type: "bad"
+							message: err
+							link: "#{viewDir}/register"
+							label: "Return"
+		else
+			res.render 'message',
+							page: "Success"
+							type: "good"
+							message: "Account created successfully."
+							link: "#{viewDir}"
+							label: "Go to profile"
+
+router.get '/', (req, res) ->
+	unless req.session.user?
+		res.render 'message',
+						page: "NoUser"
+						type: "bad"
+						message: "Not logged in!"
+						link: "/"
+						label: "Return"
+		return
+
+	u = req.session.user
+
+	res.render "#{viewDir}/index", u
 
 
 

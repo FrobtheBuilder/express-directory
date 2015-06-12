@@ -4,9 +4,9 @@ nav.navbar.navbar-inverse.navbar-fixed-top
 						// ► 
 						a.navbar-brand(href="#")
 							span SimpleDirectory ∷ 
-							if bad
+							if type === "bad"
 								span.page.text-danger=page
-							else if good
+							else if type === "good"
 								span.page.text-primary=page
 							else
 								span.page=page

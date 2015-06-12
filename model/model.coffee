@@ -8,20 +8,21 @@ userSchema = new Schema
 					password: String
 					info: String
 					pictures: [{type: Schema.Types.ObjectId, ref: 'Picture'}]
+					profilePicture:
+						type: Schema.Types.ObjectId, ref: 'Picture'
 
 pictureSchema = new Schema
 						title: String
 						_owner:
-							type: Schema.Types.ObjectId
-							ref: 'User'
+							type: Schema.Types.ObjectId, ref: 'User'
 						path: String
+						type: String
 
 Picture = mongoose.model 'Picture', pictureSchema
 User = mongoose.model 'User', userSchema
 
 connect = ->
 	mongoose.connect config.mongouri
-
 
 module.exports =
 	connect: connect
