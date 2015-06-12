@@ -45,7 +45,7 @@ Vagrant.configure(2) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
-  #config.vm.synced_folder ".", "/vagrant", type: "smb"
+  # config.vm.synced_folder ".", "/vagrant", type: "rsync"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -78,6 +78,7 @@ Vagrant.configure(2) do |config|
       cd /vagrant
       npm config set bin-links false
       sudo npm install -g nodemon coffee-script
-      npm install
+      sudo npm install -g
+      echo "export NODE_PATH=/usr/local/lib/node_modules" >> ~/.bashrc
   SHELL
 end

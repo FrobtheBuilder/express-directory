@@ -7,15 +7,15 @@ html(lang="en")
 		.container
 			.col-xs-4
 			.col-xs-4
-				form(action="/login", method="get")
+				form(action="/user", method="post")
 					.form-group
-						input.form-control(type="text", placeholder="Username")
+						input.form-control(name="username", type="text", placeholder="Username")
 					.form-group
-						input.form-control(type="text", placeholder="Email")
+						input.form-control(name="email", type="text", placeholder="Email")
 					.form-group
-						input.form-control(type="password", placeholder="Password")
+						input.form-control(name="password", type="password", placeholder="Password")
 					.form-group
-						input.form-control(type="password", placeholder="Confirm Password")
+						input.form-control(name="confirm", type="password", placeholder="Confirm Password")
 					.form-group
 						input.form-control.btn.btn-success(type="submit", value="Register")
 			.col-xs-4

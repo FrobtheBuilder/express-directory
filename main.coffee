@@ -5,6 +5,7 @@ lessMiddleware = require 'less-middleware'
 session = require 'express-session'
 
 config = require './config.json'
+model = require './model/model'
 
 app.set 'view engine', 'jade'
 app.set 'views', __dirname + '/views'
@@ -15,6 +16,9 @@ app.use bodyParser.urlencoded(extended: false)
 app.use bodyParser.json()
 app.use session
 	secret: "ayy lmao"
+
+model.connect()
+
 app.use '/user', require './routes/users'
 
 app.get '/', (req, res) ->
