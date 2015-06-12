@@ -1,0 +1,13 @@
+doctype html
+//takes: page, message, link, label
+html(lang="en")
+	head
+		include ./inc/head.jade
+	body
+		include ./inc/nav.jade
+		.container
+			.col-xs-3
+			.col-xs-6.message
+				h2= message
+				a(href=link)= label
+			.col-xs-3

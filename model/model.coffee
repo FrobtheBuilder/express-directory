@@ -5,20 +5,19 @@ config = require '../config'
 userSchema = new Schema
 					name: String
 					email: String
-					insecure_pwd: String
+					password: String
 					info: String
 					pictures: [{type: Schema.Types.ObjectId, ref: 'Picture'}]
 
-User = mongoose.model 'User', userSchema
-
 pictureSchema = new Schema
+						title: String
 						_owner:
 							type: Schema.Types.ObjectId
 							ref: 'User'
 						path: String
 
 Picture = mongoose.model 'Picture', pictureSchema
-
+User = mongoose.model 'User', userSchema
 
 connect = ->
 	mongoose.connect config.mongouri

@@ -2,4 +2,11 @@ nav.navbar.navbar-inverse.navbar-fixed-top
 				.container-fluid
 					.navbar-header 
 						// ► 
-						a.navbar-brand(href="#")= "SimpleDirectory ∷ " + page
+						a.navbar-brand(href="#")
+							span SimpleDirectory ∷ 
+							if bad
+								span.page.text-danger=page
+							else if good
+								span.page.text-primary=page
+							else
+								span.page=page

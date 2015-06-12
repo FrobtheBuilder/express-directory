@@ -20,6 +20,7 @@ app.use session
 model.connect()
 
 app.use '/user', require './routes/users'
+app.use '/test', require './routes/test'
 
 app.get '/', (req, res) ->
 	res.render 'index', page: "Index"
