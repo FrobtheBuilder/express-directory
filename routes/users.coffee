@@ -59,10 +59,29 @@ router.get '/', (req, res) ->
 
 	u = req.session.user
 
-	res.render "#{viewDir}/index", u
+	res.render "#{viewDir}/index", user: u
 
+router.post '/login', (req, res) ->
+	model.User
+	.findOne(name: req.body.username)
+	.populate('pictures profilePicture')
+	.exec (err, user) ->
 
+		unless user?
+			res.render 'message', util.message.bad "No user!", "/"
+			return
 
+		unless user.password is util.hash.toSHA1 req.body.password
+			res.render 'message', util.message.bad "Wrong password!", "/"
+			return
 
+		console.log req.body.username
+		console.log(JSON.stringify err) if err?
+		req.session.user = user
+		res.redirect("/user")
+
+router.get '/logout', (req, res) ->
+	req.session.user = null
+	res.redirect '/' #and then, ya get outta there!
 
 module.exports = router

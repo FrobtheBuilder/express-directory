@@ -10,3 +10,11 @@ exports.hash =
 		return sha.digest 'hex'
 
 exports.emailRegex = /^(([^<>()[]\.,;:s@"]+(.[^<>()[]\.,;:s@"]+)*)|(".+"))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/
+
+exports.message =
+	bad: (caption, link) ->
+		page: 'Failure'
+		type: 'bad'
+		message: caption
+		label: 'Return'
+		link: link

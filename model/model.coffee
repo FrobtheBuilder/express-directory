@@ -21,8 +21,7 @@ pictureSchema = new Schema
 Picture = mongoose.model 'Picture', pictureSchema
 User = mongoose.model 'User', userSchema
 
-connect = ->
-	mongoose.connect config.mongouri
+connect = -> mongoose.connect config.mongouri
 
 module.exports =
 	connect: connect

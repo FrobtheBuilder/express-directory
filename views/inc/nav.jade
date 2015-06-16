@@ -1,12 +1,21 @@
 nav.navbar.navbar-inverse.navbar-fixed-top
-				.container-fluid
-					.navbar-header 
+	.container-fluid
+		.navbar-header 
 						// ► 
-						a.navbar-brand(href="#")
-							span SimpleDirectory ∷ 
-							if type === "bad"
-								span.page.text-danger=page
-							else if type === "good"
-								span.page.text-primary=page
-							else
-								span.page=page
+			a.navbar-brand(href="#")
+				span SimpleDirectory ∷ 
+				if type === "bad"
+					span.page.text-danger=page
+				else if type === "good"
+					span.page.text-primary=page
+				else
+					span.page=page
+		if user
+			ul.nav.navbar-nav.navbar-right
+				li
+					a(href="/user")= user.name
+				li
+					a(href="/user/logout") 
+						span.glyphicon.glyphicon-log-out
+						span  Logout
+						
