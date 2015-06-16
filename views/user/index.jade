@@ -2,7 +2,26 @@ doctype html
 html(lang="en")
 	head
 		include ../inc/head.jade
+		script(src="/b/holderjs/holder.js")
 	body
 		- page = user.name
 		include ../inc/nav.jade
-		.container
+		.container.profile
+			.col-sm-2
+			.col-sm-8
+				.panel.panel-default
+					.panel-body
+						.col-xs-4
+							if profilePicture
+								img(src!="holder.js/200x200?auto=yes&textmode=exact")
+							else
+								img(src!="holder.js/200x200?auto=yes&textmode=exact")
+							if isSelf
+								a(href="#") Choose...
+						.col-xs-8
+							h1= user.name || "No name oh dear this is bad!"
+							.info
+								p= user.info || "No description."
+								if isSelf
+									a(href="#") Edit
+			.col-sm-2

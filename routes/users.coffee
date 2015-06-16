@@ -57,9 +57,7 @@ router.get '/', (req, res) ->
 						label: "Return"
 		return
 
-	u = req.session.user
-
-	res.render "#{viewDir}/index", user: u
+	res.render "#{viewDir}/index", user: req.session.user, isSelf: true
 
 router.post '/login', (req, res) ->
 	model.User
@@ -78,7 +76,7 @@ router.post '/login', (req, res) ->
 		console.log req.body.username
 		console.log(JSON.stringify err) if err?
 		req.session.user = user
-		res.redirect("/user")
+		res.redirect "/user"
 
 router.get '/logout', (req, res) ->
 	req.session.user = null
