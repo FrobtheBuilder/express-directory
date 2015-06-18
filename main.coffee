@@ -1,8 +1,8 @@
 express = require 'express'
 app = express()
 bodyParser = require 'body-parser'
-lessMiddleware = require 'less-middleware'
 session = require 'express-session'
+json = require 'express-json'
 
 config = require './config.json'
 model = require './model/model'
@@ -10,9 +10,8 @@ model = require './model/model'
 app.set 'view engine', 'jade'
 app.set 'views', __dirname + '/views'
 
-app.use lessMiddleware(__dirname + '/public')
-
-app.use (require 'connect-assets')()
+app.use json()
+app.use (require 'connect-assets')(build: false)
 app.use express.static(__dirname + '/public')
 app.use bodyParser.urlencoded(extended: false)
 app.use bodyParser.json()

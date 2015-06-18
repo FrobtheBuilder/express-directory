@@ -1,9 +1,11 @@
 express = require 'express'
 router = express.Router()
+async = express.Router()
 model = require '../model/model'
 router.use require('body-parser').urlencoded(extended: false)
 util = require '../util'
 config = require '../config'
+_ = require 'lodash'
 
 viewDir = "user"
 
@@ -86,5 +88,56 @@ router.post '/login', (req, res) ->
 router.get '/logout', (req, res) ->
 	req.session.user = null
 	res.redirect '/' #and then, ya get outta there!
+
+
+## ASYNC API
+router.use '/async', async
+
+# return a json object of the user in the get query's "name" field
+# return {success: true, user: user} or {success: false, reason: "whatever"}
+async.get '/', (req, res) ->
+	unless req.session.user?
+		res.json
+			success: false
+			reason: "Not logged in!"
+
+	model.User.findOne(name: req.query.name).exec (err, user) ->
+		res.json
+			success: true
+			user: user
+
+# edit a user, accepts a urlencoded request with a "change" param and a "to" param
+# return {success: true, user: user} or {success: false, reason: "whatever"}
+async.post '/', (req, res) ->
+
+	respond = (err, u) ->
+		re = if err?
+			success: false
+			reason: err
+		else
+			success: true
+			user: u
+
+		res.json re
+
+
+	toChange = req.body.change
+	to = req.body.to
+
+	unless req.session.user?
+		res.json
+			success: false
+			reason: "Not logged in!"
+
+	unless _.contains ["name", "email", "info", "password"], toChange
+		res.json
+			success: false
+			reason: "attempt to change invalid attribute #{toChange}"
+
+	model.User.findOne(_id: req.session.user._id).exec (err, user) ->
+		user[toChange] = if toChange is "password" then util.hash.toSha1 to else to
+		user.save (err) ->
+			respond err, user
+
 
 module.exports = router

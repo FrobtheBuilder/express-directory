@@ -24,5 +24,11 @@ html(lang="en")
 							.info
 								p= user.info || "No description."
 								if isSelf
-									a(href="#") Edit
+									a.edit(href="#") Edit
+							.info-edit
+								.form-group
+									input.form-control.info-box(type="textarea" rows="2")
+								.form-group
+									button.btn.btn-primary.submit-edit Submit
+							.alert
 			.col-sm-2
