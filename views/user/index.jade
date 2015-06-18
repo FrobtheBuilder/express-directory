@@ -3,6 +3,7 @@ html(lang="en")
 	head
 		include ../inc/head.jade
 		script(src="/b/holderjs/holder.js")
+		!= js("user")
 	body
 		- page = user.name
 		include ../inc/nav.jade

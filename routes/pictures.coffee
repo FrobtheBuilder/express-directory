@@ -6,3 +6,4 @@ util = require '../util'
 
 viewDir = "picture"
 
+module.exports = router
