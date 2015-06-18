@@ -3,6 +3,7 @@ router = express.Router()
 model = require '../model/model'
 router.use require('body-parser').urlencoded(extended: false)
 util = require '../util'
+config = require '../config'
 
 viewDir = "user"
 
@@ -32,32 +33,36 @@ router.post '/', (req, res) ->
 	u = req.session.user
 
 	u.save (err) ->
-		if err
-			res.render 'message',
-							page: "Failure"
-							type: "bad"
-							message: err
-							link: "#{viewDir}/register"
-							label: "Return"
+		msg = if err
+			page: "Failure"
+			type: "bad"
+			message: err
+			link: "#{viewDir}/register"
+			label: "Return"
 		else
-			res.render 'message',
-							page: "Success"
-							type: "good"
-							message: "Account created successfully."
-							link: "#{viewDir}"
-							label: "Go to profile"
+			page: "Success"
+			type: "good"
+			message: "Account created successfully."
+			link: "#{viewDir}"
+			label: "Go to profile"
+
+		res.render 'message', msg
+
 
 router.get '/', (req, res) ->
-	unless req.session.user?
-		res.render 'message',
-						page: "NoUser"
-						type: "bad"
-						message: "Not logged in!"
-						link: "/"
-						label: "Return"
-		return
 
-	res.render "#{viewDir}/index", user: req.session.user, isSelf: true
+	render = ->
+		res.render "#{viewDir}/index", user: req.session.user, isSelf: true
+
+	if config.environment is "development"
+		model.User.findOne(name: "ayy").exec (err, user) ->
+			req.session.user = user
+			render()
+	else
+		unless req.session.user?
+			res.render 'message', util.message.noSession
+			return
+		render()
 
 router.post '/login', (req, res) ->
 	model.User

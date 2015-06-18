@@ -18,3 +18,9 @@ exports.message =
 		message: caption
 		label: 'Return'
 		link: link
+	noSession:
+		page: 'Failure'
+		type: 'bad'
+		message: 'Not logged in!'
+		label: 'Return'
+		link: '/'
