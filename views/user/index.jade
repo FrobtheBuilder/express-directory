@@ -23,11 +23,11 @@ html(lang="en")
 							h1= user.name || "No name oh dear this is bad!"
 							.info
 								p= user.info || "No description."
-								if isSelf
-									a.edit(href="#") Edit
+							if isSelf
+								a.edit(href="#") Edit
 							.info-edit
 								.form-group
-									input.form-control.info-box(type="textarea" rows="2")
+									textarea.form-control.info-box(rows="3")
 								.form-group
 									button.btn.btn-primary.submit-edit Submit
 							.alert

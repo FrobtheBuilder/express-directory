@@ -1,21 +1,9 @@
 $ ->
 	$('.edit').click ->
 		$('.info').hide()
+		$('.edit').hide()
 		$('.info-edit').show()
 		$('.info-box').val $('.info > p').text()
-
-
-		###
-		$.ajax
-			method: "get"
-			url: "/user/async"
-			dataType: "json"
-			data:
-				name: "ayy"
-			success: (data) ->
-				console.log data.name
-		return
-		###
 
 	$('.submit-edit').click ->
 
@@ -29,9 +17,9 @@ $ ->
 			success: (data) ->
 				if data.success
 					$('.info-edit').hide()
-					$('.info').text(data.user.info).show()
+					$('.edit').show()
+					$('.info').html("<p>#{data.user.info}</p>").show()
 				else
 					$('.alert')
 					.addClass('alert-danger')
 					.text("Failure: #{data.reason}").show()
-

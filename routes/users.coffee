@@ -9,6 +9,8 @@ _ = require 'lodash'
 
 viewDir = "user"
 
+## TRADITIONAL API ##
+
 router.get '/register', (req, res) ->
 	res.render "#{viewDir}/register", page: "Register"
 
@@ -19,19 +21,16 @@ router.post '/', (req, res) ->
 	b.email.length > 0 and
 	#util.emailRegex.test b.email and
 	b.password is b.confirm
-		res.render 'message',
-						page: "Failure"
-						type: "bad"
-						message: "Invalid input"
-						link: "#{viewDir}/register"
-						label: "Return"
+		res.render 'message', (util.message.bad "Invalid info.", "#{viewDir}/register")
 		return
 
-	req.session.user = new model.User
-										name: req.body.username
-										email: req.body.email
-										password: util.hash.toSHA1 req.body.password
-										pictures: []
+	req.session.user = 
+	new model.User
+		name: req.body.username
+		email: req.body.email
+		password: util.hash.toSHA1 req.body.password
+		pictures: []
+
 	u = req.session.user
 
 	u.save (err) ->
@@ -90,7 +89,7 @@ router.get '/logout', (req, res) ->
 	res.redirect '/' #and then, ya get outta there!
 
 
-## ASYNC API
+## ASYNC API ##
 router.use '/async', async
 
 # return a json object of the user in the get query's "name" field
@@ -120,7 +119,6 @@ async.post '/', (req, res) ->
 
 		res.json re
 
-
 	toChange = req.body.change
 	to = req.body.to
 
@@ -135,7 +133,7 @@ async.post '/', (req, res) ->
 			reason: "attempt to change invalid attribute #{toChange}"
 
 	model.User.findOne(_id: req.session.user._id).exec (err, user) ->
-		user[toChange] = if toChange is "password" then util.hash.toSha1 to else to
+		user[toChange] = if toChange is "password" then util.hash.toSha1(to) else to
 		user.save (err) ->
 			respond err, user
 
