@@ -1,0 +1,15 @@
+doctype html
+html(lang="en")
+	head
+		include ../inc/head.jade
+		script(src="/b/holderjs/holder.js")
+		!= js("user")
+	body
+		- page = "Browse : " + pageNo
+		include ../inc/nav.jade
+		.container
+			table.table.table-hover
+				each user in users
+					tr
+						td
+							a(href="/user/id/" + user._id)= user.name

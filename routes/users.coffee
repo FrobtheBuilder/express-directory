@@ -69,8 +69,16 @@ router.get '/', (req, res) ->
 			return
 		render()
 
+router.get '/browse/:page', (req, res) ->
+	model.User.find()
+	.sort(_id: -1)
+	.skip((req.params.page-1)*50)
+	.limit(50).exec (err, users) ->
+		unless err?
+			res.render "#{viewDir}/browse", users: users, pageNo: req.params.page
+
 # page for user by object id hex string
-router.get '/:id', (req, res) ->
+router.get '/id/:id', (req, res) ->
 	model.User.findPopulated _id: req.params.id, (err, user) ->
 		if err?
 			res.render 'message', util.message.bad "No user by that ID", "/"
