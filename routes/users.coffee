@@ -1,6 +1,8 @@
 express = require 'express'
+
 router = express.Router()
 async = express.Router()
+
 model = require '../model/model'
 router.use require('body-parser').urlencoded(extended: false)
 util = require '../util'
@@ -11,9 +13,11 @@ viewDir = "user"
 
 ## TRADITIONAL API ##
 
+# registration page
 router.get '/register', (req, res) ->
 	res.render "#{viewDir}/register", page: "Register"
 
+# new user creation
 router.post '/', (req, res) ->
 	b = req.body
 
@@ -25,11 +29,11 @@ router.post '/', (req, res) ->
 		return
 
 	req.session.user = 
-	new model.User
-		name: req.body.username
-		email: req.body.email
-		password: util.hash.toSHA1 req.body.password
-		pictures: []
+		new model.User
+			name: req.body.username
+			email: req.body.email
+			password: util.hash.toSHA1 req.body.password
+			pictures: []
 
 	u = req.session.user
 
@@ -49,7 +53,7 @@ router.post '/', (req, res) ->
 
 		res.render 'message', msg
 
-
+# page for logged in user
 router.get '/', (req, res) ->
 
 	render = ->
@@ -65,6 +69,17 @@ router.get '/', (req, res) ->
 			return
 		render()
 
+# page for user by object id hex string
+router.get '/:id', (req, res) ->
+	model.User.findPopulated _id: req.params.id, (err, user) ->
+		if err?
+			res.render 'message', util.message.bad "No user by that ID", "/"
+			return
+
+		res.render "#{viewDir}/index", user: user, isSelf: false
+
+
+# pretty self-explanitory
 router.post '/login', (req, res) ->
 	model.User
 	.findOne(name: req.body.username)
