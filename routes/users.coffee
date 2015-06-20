@@ -1,6 +1,7 @@
 express = require 'express'
 
 router = express.Router()
+unauthed = express.Router()
 async = express.Router()
 
 model = require '../model/model'
@@ -11,10 +12,26 @@ _ = require 'lodash'
 
 viewDir = "user"
 
+
+router.use (req, res, next) ->
+	unless req.session.user?
+		res.render 'message', util.message.noSession
+		return
+	next()
+
+async.use (req, res, next) ->
+	unless req.session.user?
+		res.json
+			success: false
+			reason: "Not logged in!"
+		return
+	next()
+
+
 ## TRADITIONAL API ##
 
 # registration page
-router.get '/register', (req, res) ->
+unauthed.get '/register', (req, res) ->
 	res.render "#{viewDir}/register", page: "Register"
 
 # new user creation
@@ -118,11 +135,6 @@ router.use '/async', async
 # return a json object of the user in the get query's "name" field
 # return {success: true, user: user} or {success: false, reason: "whatever"}
 async.get '/', (req, res) ->
-	unless req.session.user?
-		res.json
-			success: false
-			reason: "Not logged in!"
-
 	model.User.findOne(name: req.query.name).exec (err, user) ->
 		res.json
 			success: true
@@ -144,12 +156,7 @@ async.post '/', (req, res) ->
 
 	toChange = req.body.change
 	to = req.body.to
-
-	unless req.session.user?
-		res.json
-			success: false
-			reason: "Not logged in!"
-
+	
 	unless _.contains ["name", "email", "info", "password"], toChange
 		res.json
 			success: false
@@ -161,4 +168,6 @@ async.post '/', (req, res) ->
 			respond err, user
 
 
-module.exports = router
+module.exports =
+	router: router
+	unauthed: unauthed

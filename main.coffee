@@ -20,7 +20,8 @@ app.use session
 
 model.connect()
 
-app.use '/user', require './routes/users'
+app.use '/user', (require './routes/users').router
+app.use '/user', (require './routes/users').unauthed
 app.use '/picture', require './routes/pictures'
 app.use '/test', require './routes/test'
 
