@@ -34,8 +34,28 @@ async.use (req, res, next) ->
 unauthed.get '/register', (req, res) ->
 	res.render "#{viewDir}/register", page: "Register"
 
+# pretty self-explanitory
+unauthed.post '/login', (req, res) ->
+	model.User
+	.findOne(name: req.body.username)
+	.populate('pictures profilePicture')
+	.exec (err, user) ->
+
+		unless user?
+			res.render 'message', util.message.bad "No user!", "/"
+			return
+
+		unless user.password is util.hash.toSHA1 req.body.password
+			res.render 'message', util.message.bad "Wrong password!", "/"
+			return
+
+		console.log req.body.username
+		console.log(JSON.stringify err) if err?
+		req.session.user = user
+		res.redirect "/user"
+
 # new user creation
-router.post '/', (req, res) ->
+unauthed.post '/', (req, res) ->
 	b = req.body
 
 	unless b.username.length > 0 and
@@ -72,19 +92,7 @@ router.post '/', (req, res) ->
 
 # page for logged in user
 router.get '/', (req, res) ->
-
-	render = ->
-		res.render "#{viewDir}/index", user: req.session.user, isSelf: true
-
-	if config.environment is "development"
-		model.User.findOne(name: "ayy").exec (err, user) ->
-			req.session.user = user
-			render()
-	else
-		unless req.session.user?
-			res.render 'message', util.message.noSession
-			return
-		render()
+	res.render "#{viewDir}/index", user: req.session.user, isSelf: true
 
 router.get '/browse/:page', (req, res) ->
 	model.User.find()
@@ -104,25 +112,7 @@ router.get '/id/:id', (req, res) ->
 		res.render "#{viewDir}/index", user: user, isSelf: false
 
 
-# pretty self-explanitory
-router.post '/login', (req, res) ->
-	model.User
-	.findOne(name: req.body.username)
-	.populate('pictures profilePicture')
-	.exec (err, user) ->
 
-		unless user?
-			res.render 'message', util.message.bad "No user!", "/"
-			return
-
-		unless user.password is util.hash.toSHA1 req.body.password
-			res.render 'message', util.message.bad "Wrong password!", "/"
-			return
-
-		console.log req.body.username
-		console.log(JSON.stringify err) if err?
-		req.session.user = user
-		res.redirect "/user"
 
 router.get '/logout', (req, res) ->
 	req.session.user = null
@@ -156,7 +146,7 @@ async.post '/', (req, res) ->
 
 	toChange = req.body.change
 	to = req.body.to
-	
+
 	unless _.contains ["name", "email", "info", "password"], toChange
 		res.json
 			success: false
