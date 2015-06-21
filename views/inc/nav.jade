@@ -10,10 +10,10 @@ nav.navbar.navbar-inverse.navbar-fixed-top
 					span.page.text-primary=page
 				else
 					span.page=page
-		if user
+		if me
 			ul.nav.navbar-nav.navbar-right
 				li
-					a(href="/user")= user.name
+					a(href="/user")= me.name
 				li
 					a(href="/user/logout") 
 						span.glyphicon.glyphicon-log-out

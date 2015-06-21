@@ -25,7 +25,7 @@ Vagrant.configure(2) do |config|
   # accessing "localhost:8080" will access port 80 on the guest machine.
   config.vm.network "forwarded_port", guest: 3000, host: 3000
   config.vm.network "forwarded_port", guest: 3001, host: 3001
-  config.vm.network "forwarded_port", guest: 3002, host: 3002
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
   config.ssh.forward_agent = true
   config.vm.provider "virtualbox" do |v|
     v.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/vagrant", "1"]
@@ -77,7 +77,7 @@ Vagrant.configure(2) do |config|
       sudo apt-get install -y nodejs nodejs-legacy npm mongodb git
       cd /vagrant
       npm config set bin-links false
-      sudo npm install -g nodemon coffee-script
+      sudo npm install -g nodemon coffee-script node-pre-gyp node-inspector
       sudo npm install -g
       echo "export NODE_PATH=/usr/local/lib/node_modules" >> ~/.bashrc
   SHELL

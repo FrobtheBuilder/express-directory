@@ -1,3 +1,12 @@
+if module.filename.match /\.(lit)?coffee$/
+	# DIY source map support
+	require('source-map-support').install
+		retrieveSourceMap: require './retrieve_source_map'
+else
+	# Assume source maps have already been compiled
+	require('source-map-support').install()
+
+
 express = require 'express'
 app = express()
 bodyParser = require 'body-parser'
@@ -6,6 +15,7 @@ json = require 'express-json'
 
 config = require './config.json'
 model = require './model/model'
+util = require './util'
 
 app.set 'view engine', 'jade'
 app.set 'views', __dirname + '/views'
@@ -19,6 +29,10 @@ app.use session
 	secret: "ayy lmao"
 
 model.connect()
+
+app.use (req, res, next) ->
+	console.log util.reqThings req
+	next()
 
 app.use '/user', (require './routes/users').unauthed
 app.use '/user', (require './routes/users').router

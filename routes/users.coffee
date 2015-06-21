@@ -15,16 +15,17 @@ viewDir = "user"
 
 router.use (req, res, next) ->
 	unless req.session.user?
-		res.render 'message', util.message.noSession
-		return
+		return res.render 'message', util.message.noSession
+	res.locals =
+		me: req.session.user #for use within templates
 	next()
+
 
 async.use (req, res, next) ->
 	unless req.session.user?
-		res.json
+		return res.json
 			success: false
 			reason: "Not logged in!"
-		return
 	next()
 
 
@@ -33,6 +34,7 @@ async.use (req, res, next) ->
 # registration page
 unauthed.get '/register', (req, res) ->
 	res.render "#{viewDir}/register", page: "Register"
+
 
 # pretty self-explanitory
 unauthed.post '/login', (req, res) ->
@@ -49,10 +51,9 @@ unauthed.post '/login', (req, res) ->
 			res.render 'message', util.message.bad "Wrong password!", "/"
 			return
 
-		console.log req.body.username
-		console.log(JSON.stringify err) if err?
 		req.session.user = user
 		res.redirect "/user"
+
 
 # new user creation
 unauthed.post '/', (req, res) ->
@@ -90,9 +91,13 @@ unauthed.post '/', (req, res) ->
 
 		res.render 'message', msg
 
+
 # page for logged in user
 router.get '/', (req, res) ->
-	res.render "#{viewDir}/index", user: req.session.user, isSelf: true
+	res.render "#{viewDir}/index",
+		user: req.session.user
+		isSelf: true
+
 
 router.get '/browse/:page', (req, res) ->
 	model.User.find()
@@ -100,7 +105,10 @@ router.get '/browse/:page', (req, res) ->
 	.skip((req.params.page-1)*50)
 	.limit(50).exec (err, users) ->
 		unless err?
-			res.render "#{viewDir}/browse", users: users, pageNo: req.params.page
+			res.render "#{viewDir}/browse",
+				users: users
+				pageNo: req.params.page
+
 
 # page for user by object id hex string
 router.get '/id/:id', (req, res) ->
@@ -109,9 +117,9 @@ router.get '/id/:id', (req, res) ->
 			res.render 'message', util.message.bad "No user by that ID", "/"
 			return
 
-		res.render "#{viewDir}/index", user: user, isSelf: false
-
-
+		res.render "#{viewDir}/index",
+			user: user
+			isSelf: false
 
 
 router.get '/logout', (req, res) ->
@@ -122,40 +130,40 @@ router.get '/logout', (req, res) ->
 ## ASYNC API ##
 router.use '/async', async
 
+
 # return a json object of the user in the get query's "name" field
 # return {success: true, user: user} or {success: false, reason: "whatever"}
 async.get '/', (req, res) ->
 	model.User.findOne(name: req.query.name).exec (err, user) ->
-		res.json
+		reply = unless err?
 			success: true
 			user: user
+		else
+			util.json.fail err
+
+		res.json reply
+
 
 # edit a user, accepts a urlencoded request with a "change" param and a "to" param
 # return {success: true, user: user} or {success: false, reason: "whatever"}
 async.post '/', (req, res) ->
 
-	respond = (err, u) ->
-		re = if err?
-			success: false
-			reason: err
-		else
-			success: true
-			user: u
-
-		res.json re
-
 	toChange = req.body.change
 	to = req.body.to
 
 	unless _.contains ["name", "email", "info", "password"], toChange
-		res.json
-			success: false
-			reason: "attempt to change invalid attribute #{toChange}"
+		res.json(util.json.fail "attempt to change invalid attribute #{toChange}")
 
 	model.User.findOne(_id: req.session.user._id).exec (err, user) ->
 		user[toChange] = if toChange is "password" then util.hash.toSha1(to) else to
 		user.save (err) ->
-			respond err, user
+			reply = unless err?
+				success: true
+				user: user
+			else
+				util.json.fail err
+
+			res.json reply
 
 
 module.exports =

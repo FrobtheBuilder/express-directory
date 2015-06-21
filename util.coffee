@@ -24,3 +24,16 @@ exports.message =
 		message: 'Not logged in!'
 		label: 'Return'
 		link: '/'
+
+exports.json = 
+	fail: (reason) ->
+		success: false
+		reason: reason
+
+exports.reqThings = (req) ->
+	method: req.method
+	url: req.url
+	query: req.query
+	params: req.params
+	body: req.body
+	session: req.session
