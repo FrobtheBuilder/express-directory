@@ -34,6 +34,12 @@ app.use (req, res, next) ->
 	console.log util.reqThings req
 	next()
 
+app.use (req, res, next) ->
+	if req.session.user?
+		res.locals =
+			me: req.session.user #for use within templates
+	next()
+
 app.use '/user', (require './routes/users').unauthed
 app.use '/user', (require './routes/users').router
 app.use '/picture', require './routes/pictures'

@@ -1,4 +1,5 @@
 crypto = require 'crypto'
+model = require './model/model'
 
 exports.logIf = (thing) ->
 	if thing? then console.log thing
@@ -37,3 +38,25 @@ exports.reqThings = (req) ->
 	params: req.params
 	body: req.body
 	session: req.session
+
+exports.middleware =
+	getDevUser: (userCriteria) ->
+		return (req, res, next) ->
+			unless req.session.user?
+				model.User.findPopulated userCriteria, (err, u) ->
+					req.session.user = u
+					next()
+			else
+				next()
+
+	checkUser: (req, res, next) ->
+		unless req.session.user?
+			return res.render 'message', exports.message.noSession
+		next()
+
+	checkUserAsync: (req, res, next) ->
+		unless req.session.user?
+			return res.json
+				success: false
+				reason: "Not logged in!"
+		next()

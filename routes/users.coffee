@@ -7,26 +7,20 @@ async = express.Router()
 model = require '../model/model'
 router.use require('body-parser').urlencoded(extended: false)
 util = require '../util'
+middleware = util.middleware
 config = require '../config'
 _ = require 'lodash'
 
 viewDir = "user"
 
+## Middleware Setup ##
 
-router.use (req, res, next) ->
-	unless req.session.user?
-		return res.render 'message', util.message.noSession
-	res.locals =
-		me: req.session.user #for use within templates
-	next()
+if config.environment is "development"
+	router.use middleware.getDevUser(name: "Frob")
 
+router.use middleware.checkUser
 
-async.use (req, res, next) ->
-	unless req.session.user?
-		return res.json
-			success: false
-			reason: "Not logged in!"
-	next()
+async.use middleware.checkUserAsync
 
 
 ## TRADITIONAL API ##

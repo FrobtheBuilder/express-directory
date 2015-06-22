@@ -1,9 +1,9 @@
 $ ->
 	$('.edit').click ->
-		$('.info').hide()
-		$('.edit').hide()
+		$('.info').add('.edit').hide()
 		$('.info-edit').show()
 		$('.info-box').val $('.info > p').text()
+
 
 	$('.submit-edit').click ->
 

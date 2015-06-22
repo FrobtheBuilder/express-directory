@@ -77,7 +77,7 @@ Vagrant.configure(2) do |config|
       sudo apt-get install -y nodejs nodejs-legacy npm mongodb git
       cd /vagrant
       npm config set bin-links false
-      sudo npm install -g nodemon coffee-script node-pre-gyp node-inspector
+      sudo npm install -g nodemon coffee-script node-pre-gyp node-inspector nodev
       sudo npm install -g
       echo "export NODE_PATH=/usr/local/lib/node_modules" >> ~/.bashrc
   SHELL
