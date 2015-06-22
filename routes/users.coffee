@@ -19,6 +19,7 @@ if config.environment is "development"
 	router.use middleware.getDevUser(name: "Frob")
 
 router.use middleware.checkUser
+router.use middleware.aliasUser
 
 async.use middleware.checkUserAsync
 

@@ -60,3 +60,7 @@ exports.middleware =
 				success: false
 				reason: "Not logged in!"
 		next()
+
+	aliasUser: (req, res, next) ->
+		res.locals.me = req.session.user #for use within templates
+		next()

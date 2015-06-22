@@ -1,12 +1,3 @@
-if module.filename.match /\.(lit)?coffee$/
-	# DIY source map support
-	require('source-map-support').install
-		retrieveSourceMap: require './retrieve_source_map'
-else
-	# Assume source maps have already been compiled
-	require('source-map-support').install()
-
-
 express = require 'express'
 app = express()
 bodyParser = require 'body-parser'
@@ -32,12 +23,6 @@ model.connect()
 
 app.use (req, res, next) ->
 	console.log util.reqThings req
-	next()
-
-app.use (req, res, next) ->
-	if req.session.user?
-		res.locals =
-			me: req.session.user #for use within templates
 	next()
 
 app.use '/user', (require './routes/users').unauthed
