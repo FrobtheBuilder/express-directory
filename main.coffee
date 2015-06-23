@@ -7,10 +7,14 @@ json = require 'express-json'
 config = require './config.json'
 model = require './model/model'
 util = require './util'
+multer = require 'multer'
 
 app.set 'view engine', 'jade'
 app.set 'views', __dirname + '/views'
 
+
+app.use multer
+	dest: "./public/img/"
 app.use json()
 app.use (require 'connect-assets')(build: false)
 app.use express.static(__dirname + '/public')

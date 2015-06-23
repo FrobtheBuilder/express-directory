@@ -3,8 +3,19 @@ html(lang="en")
 	head
 		include ../inc/head.jade
 		script(src="/b/holderjs/holder.js")
-		!= js("user")
 	body
 		- page = "Upload"
 		include ../inc/nav.jade
 		.container
+			.col-sm-4
+			.col-sm-4
+				.panel.panel-default
+					.panel-body
+						form(action="/picture/upload", method="post", enctype="multipart/form-data")
+							.form-group
+								input.form-control(name="title", type="text")
+							.form-group
+								input.form-control(name="picture", type="file")
+							.form-group
+								input.btn.btn-primary.form-control(type="submit", value="Upload")
+			.col-sm-4

@@ -38,6 +38,7 @@ exports.reqThings = (req) ->
 	params: req.params
 	body: req.body
 	session: req.session
+	files: req.files
 
 exports.middleware =
 	getDevUser: (userCriteria) ->
