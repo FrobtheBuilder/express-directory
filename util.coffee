@@ -4,6 +4,14 @@ model = require './model/model'
 exports.logIf = (thing) ->
 	if thing? then console.log thing
 
+exports.errorOut = (res, err) ->
+	res.render 'message',
+		page: 'Error!'
+		type: 'bad'
+		message: err
+		label: 'Return'
+		link: '/'
+
 exports.hash = 
 	toSHA1: (string) ->
 		sha = crypto.createHash 'sha1'

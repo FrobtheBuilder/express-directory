@@ -46,21 +46,12 @@ router.post '/upload', (req, res) ->
 
 	newPic.save (err) ->
 		if err?
-			res.render 'message', util.message.bad "#{err}", "#{viewDir}/upload"
-		res.end("dun")
+			util.errorOut res, err
 
-	#model.User.findOne(_id: u._id).exec (err, user) ->
-	#	user.pictures.push
-	###
-	fs.mkdir "#{storagePath}/#{u.name}", ->
-		fs.rename p.path, "#{storagePath}/#{u.name}/#{p.name}", ->
-			res.render 'message',
-				page: "Uploaded"
-				type: "good"
-				message: "File uploaded!"
-				label: "Return"
-				link: "/"
-	console.log "#{storagePath}/#{u.name}/#{p.name}"
-	###
+router.get '/id/:id', (req, res) ->
+	model.Picture.findOne(_id: req.params.id).exec (err, picture) ->
+		unless picture?
+			util.errorOut res, new Error("No Picture by that ID!")
+		if err? then util.errorOut res, err
 
-
+		
