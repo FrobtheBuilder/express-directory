@@ -2,6 +2,7 @@ express = require 'express'
 router = express.Router()
 model = require '../model/model'
 config = require '../config'
+sharp = require 'sharp'
 
 router.use require('body-parser').urlencoded(extended: false)
 util = require '../util'
@@ -12,6 +13,7 @@ fs = require 'fs'
 
 viewDir = "picture"
 storagePath = "./public/img" # relative to process.cwd() which is the parent directory
+thumbPath = "./public/img/thumb"
 
 module.exports = router
 
@@ -37,21 +39,28 @@ router.post '/upload', (req, res) ->
 	u = req.session.user
 	p = req.files.picture
 
-	newPic = 
-		new model.Picture
-			title: req.body.title
-			_owner: u._id
-			path: p.path
-			type: p.extension
+	processed =
+		name: "#{u.name}#{p.name}"
+	
+	processed.path = "#{storagePath}/#{processed.name}"
 
-	newPic.save (err) ->
-		if err?
-			util.errorOut res, err
+	fs.rename p.path, processed.path, ->
+		newPic = 
+			new model.Picture
+				title: req.body.title
+				_owner: u._id
+				name: processed.name
+				path: processed.path
+				type: p.extension
+
+		sharp(processed.path).resize(200, 200).toFile("#{thumbPath}/#{processed.name}")
+		newPic.save (err) ->
+			if err?
+				util.errorOut res, err
+			res.end "yu dun it"
 
 router.get '/id/:id', (req, res) ->
 	model.Picture.findOne(_id: req.params.id).exec (err, picture) ->
 		unless picture?
 			util.errorOut res, new Error("No Picture by that ID!")
 		if err? then util.errorOut res, err
-
-		

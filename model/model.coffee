@@ -16,6 +16,7 @@ pictureSchema = new Schema
 						title: String
 						_owner:
 							type: Schema.Types.ObjectId, ref: 'User'
+						name: String
 						path: String
 						type: String
 

@@ -74,11 +74,13 @@ Vagrant.configure(2) do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
       sudo apt-get update
-      sudo apt-get install -y nodejs nodejs-legacy npm mongodb git
+      sudo apt-get install -y nodejs nodejs-legacy npm mongodb git pkg-config
+      curl -s https://raw.githubusercontent.com/lovell/sharp/master/preinstall.sh | sudo bash -
       cd /vagrant
-      npm config set bin-links false
-      sudo npm install -g nodemon coffee-script node-pre-gyp node-inspector nodev
+      sudo npm install -g nodemon coffee-script node-pre-gyp node-inspector
       sudo npm install -g
+      #global because windows doesn't like deep nests
       echo "export NODE_PATH=/usr/local/lib/node_modules" >> ~/.bashrc
+      #and fix the path to make it look like they're installed locally
   SHELL
 end

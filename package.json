@@ -10,17 +10,16 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "connect-assets": "~4.7.1",
-
     "body-parser": "~1.12.4",
     "express": "~4.12.4",
     "lodash": "~3.9.3",
     "multer": "~0.1.8",
     "express-json": "~1.0.0",
-
     "express-logger": "0.0.3",
     "express-session": "~1.11.2",
     "jade": "~1.10.0",
     "less": "~2.5.1",
-    "mongoose": "^4.0.5"
+    "mongoose": "^4.0.5",
+    "sharp": "~0.10.1"
   }
 }
