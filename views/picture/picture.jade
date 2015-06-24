@@ -1,0 +1,20 @@
+doctype html
+html(lang="en")
+	head
+		include ../inc/head.jade
+		script(src="/b/holderjs/holder.js")
+	body
+		- page = "Picture : " + picture.title
+		include ../inc/nav.jade
+		.container
+			.col-md-2
+			.col-md-8
+				.picture
+					img(src="/img/"+picture.name)
+				.col-md-2
+				.col-md-8
+					h1= picture.title
+					h2= "By "
+						a(href="/user/id/"+picture._owner._id)= picture._owner.name
+				.col-md-2
+			.col-md-2

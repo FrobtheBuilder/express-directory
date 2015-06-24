@@ -41,7 +41,7 @@ router.post '/upload', (req, res) ->
 
 	processed =
 		name: "#{u.name}#{p.name}"
-	
+
 	processed.path = "#{storagePath}/#{processed.name}"
 
 	fs.rename p.path, processed.path, ->
@@ -53,14 +53,38 @@ router.post '/upload', (req, res) ->
 				path: processed.path
 				type: p.extension
 
-		sharp(processed.path).resize(200, 200).toFile("#{thumbPath}/#{processed.name}")
+		fs.mkdir thumbPath, ->
+			sharp(processed.path).resize(200, 200).toFile("#{thumbPath}/#{processed.name}")
 		newPic.save (err) ->
 			if err?
 				util.errorOut res, err
-			res.end "yu dun it"
+			model.User.findOne(_id: u._id).exec (err, user) ->
+				user.pictures.push newPic._id
+				user.save (err2) ->
+					if err then util.errorOut res, err2
+					res.redirect "/picture/id/#{newPic._id}"
 
 router.get '/id/:id', (req, res) ->
 	model.Picture.findOne(_id: req.params.id).exec (err, picture) ->
 		unless picture?
 			util.errorOut res, new Error("No Picture by that ID!")
 		if err? then util.errorOut res, err
+		model.Picture.findOne(_id: req.params.id)
+		.populate("_owner")
+		.exec (err, picture) ->
+			res.render "#{viewDir}/picture",
+				picture: picture
+
+router.get '/userid/:uid', (req, res) ->
+	unless req.query.page?
+		req.params.page = 1
+	pg = req.params.page
+	start = (pg-1)*50
+	end = ((pg-1)*50) + 50
+	model.User.findOne(_id: req.params.uid)
+	.populate("pictures")
+	.exec (err, user) ->
+		console.log user.pictures
+		res.render "#{viewDir}/browse", pictures: user.pictures[start..end], user: user
+
+

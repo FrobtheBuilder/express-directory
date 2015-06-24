@@ -1,0 +1,16 @@
+doctype html
+html(lang="en")
+	head
+		include ../inc/head.jade
+		script(src="/b/holderjs/holder.js")
+	body
+		- page = "Pictures : " + user.name
+		include ../inc/nav.jade
+		.container
+			.col-md-2
+			.col-md-8
+				.pictures
+					each picture in pictures
+						a(href="/picture/id/"+picture._id)
+							img(src="/img/thumb/"+picture.name)
+			.col-md-2

@@ -112,9 +112,11 @@ router.get '/id/:id', (req, res) ->
 			res.render 'message', util.message.bad "No user by that ID", "/"
 			return
 
+		isSelf = user._id is req.session.user._id
+
 		res.render "#{viewDir}/index",
 			user: user
-			isSelf: false
+			isSelf: isSelf
 
 
 router.get '/logout', (req, res) ->
