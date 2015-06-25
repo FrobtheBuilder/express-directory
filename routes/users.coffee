@@ -15,8 +15,7 @@ viewDir = "user"
 
 ## Middleware Setup ##
 
-if config.environment is "development"
-	router.use middleware.getDevUser(name: "Frob")
+router.use middleware.getAnonymousUser()
 
 router.use middleware.checkUser
 router.use middleware.aliasUser
@@ -89,6 +88,8 @@ unauthed.post '/', (req, res) ->
 
 # page for logged in user
 router.get '/', (req, res) ->
+	if res.user._id is util.anonymous._id
+		res.redirect "/"
 	res.render "#{viewDir}/index",
 		user: req.session.user
 		isSelf: true
@@ -161,7 +162,6 @@ async.post '/', (req, res) ->
 				util.json.fail err
 
 			res.json reply
-
 
 module.exports =
 	router: router

@@ -11,6 +11,12 @@ exports.errorOut = (res, err) ->
 		message: err
 		label: 'Return'
 		link: '/'
+exports.err = (err) ->
+		page: 'Error!'
+		type: 'bad'
+		message: err
+		label: 'Return'
+		link: '/'
 
 exports.hash = 
 	toSHA1: (string) ->
@@ -48,6 +54,11 @@ exports.reqThings = (req) ->
 	session: req.session
 	files: req.files
 
+exports.anonymous = 
+	new model.User
+		_id: new model.ObjectId("666")
+		name: "Anonymous"
+
 exports.middleware =
 	getDevUser: (userCriteria) ->
 		return (req, res, next) ->
@@ -57,6 +68,12 @@ exports.middleware =
 					next()
 			else
 				next()
+
+	getAnonymousUser: ->
+		return (req, res, next) ->
+			unless req.session.user?
+				req.session.user = exports.anonymous
+			next()
 
 	checkUser: (req, res, next) ->
 		unless req.session.user?
@@ -71,5 +88,7 @@ exports.middleware =
 		next()
 
 	aliasUser: (req, res, next) ->
-		res.locals.me = req.session.user #for use within templates
+		unless req.session.user._id is exports.anonymous._id
+			res.locals.me = req.session.user #for use within templates
 		next()
+

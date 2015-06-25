@@ -17,8 +17,7 @@ thumbPath = "./public/img/thumb"
 
 module.exports = router
 
-if config.environment is "development"
-	router.use middleware.getDevUser(name: "Frob")
+router.use middleware.getAnonymousUser()
 
 router.use middleware.checkUser
 
@@ -57,7 +56,7 @@ router.post '/upload', (req, res) ->
 			sharp(processed.path).resize(200, 200).toFile("#{thumbPath}/#{processed.name}")
 		newPic.save (err) ->
 			if err?
-				util.errorOut res, err
+				return util.errorOut res, err
 			model.User.findOne(_id: u._id).exec (err, user) ->
 				user.pictures.push newPic._id
 				user.save (err2) ->

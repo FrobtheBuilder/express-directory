@@ -20,6 +20,7 @@
     "jade": "~1.10.0",
     "less": "~2.5.1",
     "mongoose": "^4.0.5",
-    "sharp": "~0.10.1"
+    "sharp": "~0.10.1",
+    "mongoose-unique-validator": "~0.4.1"
   }
 }

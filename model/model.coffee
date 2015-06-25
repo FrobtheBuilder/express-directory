@@ -1,6 +1,8 @@
 mongoose = require 'mongoose'
 Schema = mongoose.Schema
 config = require '../config'
+unique = require 'mongoose-unique-validator'
+validators = require './validators'
 
 userSchema = new Schema
 					no: Number
@@ -12,6 +14,8 @@ userSchema = new Schema
 					profilePicture:
 						type: Schema.Types.ObjectId, ref: 'Picture'
 
+userSchema.plugin unique
+
 pictureSchema = new Schema
 						title: String
 						_owner:
@@ -21,7 +25,15 @@ pictureSchema = new Schema
 						type: String
 
 Picture = mongoose.model 'Picture', pictureSchema
+
+Picture.schema.path('title').validate(validators.length 1, 100)
+
 User = mongoose.model 'User', userSchema
+
+User.schema.path('name').validate(validators.length 1, 30)
+User.schema.path('email').validate(validators.length 5, 30)
+User.schema.path('password').validate(validators.length 5, 30)
+User.schema.path('info').validate(validators.length 0, 500)
 
 User.findPopulated = (criteria, callback) ->
 	User.findOne(criteria).populate("pictures profilePicture").exec callback
