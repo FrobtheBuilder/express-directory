@@ -155,6 +155,8 @@ async.post '/', (req, res) ->
 	model.User.findOne(_id: req.session.user._id).exec (err, user) ->
 		user[toChange] = if toChange is "password" then util.hash.toSha1(to) else to
 		user.save (err) ->
+			unless err?
+				req.session.user[toChange] = user[toChange]
 			reply = unless err?
 				success: true
 				user: user

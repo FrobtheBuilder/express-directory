@@ -9,6 +9,9 @@ model = require './model/model'
 util = require './util'
 multer = require 'multer'
 helpers = require "./helpers/helpers"
+mongoose = require 'mongoose'
+#Mongostore = (require 'connect-mongo') session
+FileStore = require('session-file-store')(session)
 _ = require 'lodash'
 
 ## SETTINGS ##
@@ -23,15 +26,19 @@ app.use (require 'connect-assets')(build: false)
 app.use express.static(__dirname + '/public')
 app.use bodyParser.urlencoded(extended: false)
 app.use bodyParser.json()
-app.use session
-	secret: "ayy lmao"
-
 app.use (req, res, next) ->
 	console.log util.reqThings req
 	next()
 
 ## INITIALIZATION ##
 model.connect()
+
+app.use session
+	resave: false
+	saveUninitialized: true
+	secret: "ayy lmao"
+	store: (new FileStore())
+
 app.locals = _.merge app.locals, helpers
 
 
