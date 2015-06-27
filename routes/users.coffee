@@ -88,7 +88,7 @@ unauthed.post '/', (req, res) ->
 
 # page for logged in user
 router.get '/', (req, res) ->
-	if res.user._id is util.anonymous._id
+	if req.session.user._id is util.anonymous._id
 		res.redirect "/"
 	res.render "#{viewDir}/index",
 		user: req.session.user
@@ -149,7 +149,7 @@ async.post '/', (req, res) ->
 	toChange = req.body.change
 	to = req.body.to
 
-	unless _.contains ["name", "email", "info", "password"], toChange
+	unless toChange in ["name", "email", "info", "password"]
 		res.json(util.json.fail "attempt to change invalid attribute #{toChange}")
 
 	model.User.findOne(_id: req.session.user._id).exec (err, user) ->

@@ -8,11 +8,14 @@ config = require './config.json'
 model = require './model/model'
 util = require './util'
 multer = require 'multer'
+helpers = require "./helpers/helpers"
+_ = require 'lodash'
 
+## SETTINGS ##
 app.set 'view engine', 'jade'
 app.set 'views', __dirname + '/views'
 
-
+## GLOBAL MIDDLEWARE ##
 app.use multer
 	dest: "./public/img/"
 app.use json()
@@ -23,17 +26,23 @@ app.use bodyParser.json()
 app.use session
 	secret: "ayy lmao"
 
-model.connect()
-
 app.use (req, res, next) ->
 	console.log util.reqThings req
 	next()
 
+## INITIALIZATION ##
+model.connect()
+app.locals = _.merge app.locals, helpers
+
+
+## ROUTERS ##
 app.use '/user', (require './routes/users').unauthed
 app.use '/user', (require './routes/users').router
 app.use '/picture', require './routes/pictures'
 app.use '/test', require './routes/test'
 
+
+## ROOT ROUTE ##
 app.get '/', (req, res) ->
 	res.render 'index', page: "Index"
 

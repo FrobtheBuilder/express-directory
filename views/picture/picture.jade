@@ -10,11 +10,13 @@ html(lang="en")
 			.col-md-2
 			.col-md-8
 				.picture
-					img(src="/img/"+picture.name)
+					a(href="/img/"+picture.name)
+						img.img-responsive.center-block(src="/img/"+picture.name)
 				.col-md-2
 				.col-md-8
 					h1= picture.title
 					h2= "By "
-						a(href="/user/id/"+picture._owner._id)= picture._owner.name
+						//a(href="/user/id/"+picture._owner._id)= picture._owner.name
+						a(href=route.user.id(picture._owner._id))= picture._owner.name
 				.col-md-2
 			.col-md-2

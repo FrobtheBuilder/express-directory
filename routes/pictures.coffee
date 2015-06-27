@@ -38,30 +38,38 @@ router.post '/upload', (req, res) ->
 	u = req.session.user
 	p = req.files.picture
 
-	processed =
-		name: "#{u.name}#{p.name}"
+	unless p.mimetype in ["image/png", "image/jpeg"]
+		return util.errorOut res, new Error("Not an accepted format.")
 
-	processed.path = "#{storagePath}/#{processed.name}"
+	sharp(p.path).metadata (err, metadata) ->
+		if metadata.width > 3000 or metadata.height > 3000
+			return util.errorOut res, new Error("Picture too large.")
 
-	fs.rename p.path, processed.path, ->
-		newPic = 
-			new model.Picture
-				title: req.body.title
-				_owner: u._id
-				name: processed.name
-				path: processed.path
-				type: p.extension
-
-		fs.mkdir thumbPath, ->
-			sharp(processed.path).resize(200, 200).toFile("#{thumbPath}/#{processed.name}")
-		newPic.save (err) ->
-			if err?
-				return util.errorOut res, err
-			model.User.findOne(_id: u._id).exec (err, user) ->
-				user.pictures.push newPic._id
-				user.save (err2) ->
-					if err then util.errorOut res, err2
-					res.redirect "/picture/id/#{newPic._id}"
+		processed =
+			name: "#{u.name}#{p.name}"
+	
+		processed.path = "#{storagePath}/#{processed.name}"
+	
+		fs.rename p.path, processed.path, ->
+			newPic = 
+				new model.Picture
+					title: req.body.title
+					_owner: u._id
+					name: processed.name
+					path: processed.path
+					type: p.extension
+	
+			fs.mkdir thumbPath, ->
+				sharp(processed.path)
+				.resize(200, 200).toFile("#{thumbPath}/#{processed.name}")
+			newPic.save (err) ->
+				if err?
+					return util.errorOut res, err
+				model.User.findOne(_id: u._id).exec (err, user) ->
+					user.pictures.push newPic._id
+					user.save (err2) ->
+						if err then return util.errorOut res, err2
+						res.redirect "/picture/id/#{newPic._id}"
 
 router.get '/id/:id', (req, res) ->
 	model.Picture.findOne(_id: req.params.id).exec (err, picture) ->
@@ -84,6 +92,7 @@ router.get '/userid/:uid', (req, res) ->
 	.populate("pictures")
 	.exec (err, user) ->
 		console.log user.pictures
-		res.render "#{viewDir}/browse", pictures: user.pictures[start..end], user: user
-
-
+		res.render "#{viewDir}/browse",
+			pictures: user.pictures[start..end]
+			user: user
+			isSelf: req.session.user._id is req.params.uid

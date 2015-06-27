@@ -9,9 +9,11 @@ html(lang="en")
 		.container
 			.col-md-2
 			.col-md-8
-				a.btn(href="/user/id/"+user._id)!= "< "+user.name
+				a.btn.btn-link(href="/user/id/"+user._id)!= "< "+user.name
 				.pictures
 					each picture in pictures
 						a(href="/picture/id/"+picture._id)
-							img(src="/img/thumb/"+picture.name)
+							img.img-thumbnail(src="/img/thumb/"+picture.name)
+				if isSelf
+					a.btn.btn-primary.btn-sm.pull-right(href="/picture/upload") Upload
 			.col-md-2

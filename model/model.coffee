@@ -32,7 +32,6 @@ User = mongoose.model 'User', userSchema
 
 User.schema.path('name').validate(validators.length 1, 30)
 User.schema.path('email').validate(validators.length 5, 30)
-User.schema.path('password').validate(validators.length 5, 30)
 User.schema.path('info').validate(validators.length 0, 500)
 
 User.findPopulated = (criteria, callback) ->
