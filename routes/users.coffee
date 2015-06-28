@@ -34,7 +34,6 @@ unauthed.get '/register', (req, res) ->
 unauthed.post '/login', (req, res) ->
 	model.User
 	.findOne(name: req.body.username)
-	.populate('pictures profilePicture')
 	.exec (err, user) ->
 
 		unless user?
@@ -90,9 +89,11 @@ unauthed.post '/', (req, res) ->
 router.get '/', (req, res) ->
 	if req.session.user._id is util.anonymous._id
 		res.redirect "/"
-	res.render "#{viewDir}/index",
-		user: req.session.user
-		isSelf: true
+	model.User.findPopulated _id: req.session.user._id, (err, popUser) ->
+		if err? then util.errorOut res, err
+		res.render "#{viewDir}/index",
+			user: popUser
+			isSelf: true
 
 
 router.get '/browse/:page', (req, res) ->
@@ -149,11 +150,14 @@ async.post '/', (req, res) ->
 	toChange = req.body.change
 	to = req.body.to
 
-	unless toChange in ["name", "email", "info", "password"]
+	unless toChange in ["name", "email", "info", "password", "profilePicture"]
 		res.json(util.json.fail "attempt to change invalid attribute #{toChange}")
 
 	model.User.findOne(_id: req.session.user._id).exec (err, user) ->
-		user[toChange] = if toChange is "password" then util.hash.toSha1(to) else to
+		user[toChange] = if toChange is "password"
+			util.hash.toSha1(to)
+		else
+			to
 		user.save (err) ->
 			unless err?
 				req.session.user[toChange] = user[toChange]

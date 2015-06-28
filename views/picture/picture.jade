@@ -3,6 +3,7 @@ html(lang="en")
 	head
 		include ../inc/head.jade
 		script(src="/b/holderjs/holder.js")
+		!= js("picture")
 	body
 		- page = "Picture : " + picture.title
 		include ../inc/nav.jade
@@ -14,6 +15,10 @@ html(lang="en")
 						img.img-responsive.center-block(src="/img/"+picture.name)
 				.col-md-2
 				.col-md-8
+					if picture._owner._id == me._id
+						.pictureID.hidden!= picture._id
+						button.btn.btn-sm.btn-link.pull-right.set Set as Profile Image...
+						.alert
 					h1= picture.title
 					h2= "By "
 						//a(href="/user/id/"+picture._owner._id)= picture._owner.name

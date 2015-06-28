@@ -34,7 +34,7 @@ app.use (req, res, next) ->
 model.connect()
 
 app.use session
-	resave: false
+	resave: true
 	saveUninitialized: true
 	secret: "ayy lmao"
 	store: (new FileStore())
