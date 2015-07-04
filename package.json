@@ -24,6 +24,7 @@
     "session-file-store": "~0.0.14",
     "sharp": "~0.10.1",
     "mongoose-unique-validator": "~0.4.1",
-    "async": "~1.2.1"
+    "async": "~1.2.1",
+    "marked": "~0.3.3"
   }
 }

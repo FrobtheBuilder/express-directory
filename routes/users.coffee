@@ -1,4 +1,8 @@
 express = require 'express'
+marked = require 'marked'
+marked.setOptions
+	breaks: true
+	sanitize: true
 
 router = express.Router()
 unauthed = express.Router()
@@ -16,7 +20,6 @@ viewDir = "user"
 ## Middleware Setup ##
 
 router.use middleware.getAnonymousUser()
-
 router.use middleware.checkUser
 router.use middleware.aliasUser
 
@@ -28,7 +31,6 @@ async.use middleware.checkUserAsync
 # registration page
 unauthed.get '/register', (req, res) ->
 	res.render "#{viewDir}/register", page: "Register"
-
 
 # pretty self-explanitory
 unauthed.post '/login', (req, res) ->
@@ -100,11 +102,13 @@ router.get '/browse/:page', (req, res) ->
 	model.User.find()
 	.sort(_id: -1)
 	.skip((req.params.page-1)*50)
-	.limit(50).exec (err, users) ->
+	.limit(51).exec (err, users) ->
 		unless err?
 			res.render "#{viewDir}/browse",
 				users: users
 				pageNo: req.params.page
+				isNext: false
+				isPrev: false
 
 
 # page for user by object id hex string
@@ -114,7 +118,7 @@ router.get '/id/:id', (req, res) ->
 			res.render 'message', util.message.bad "No user by that ID", "/"
 			return
 
-		isSelf = user._id is req.session.user._id
+		isSelf = String(user._id) == String(req.session.user._id) #ugh.
 
 		res.render "#{viewDir}/index",
 			user: user
@@ -142,11 +146,19 @@ async.get '/', (req, res) ->
 
 		res.json reply
 
+async.get '/self', (req, res) ->
+	model.User.findOne(_id: req.session.user._id).exec (err, user) ->
+		reply = unless err?
+			success: true
+			user: user
+		else
+			util.json.fail err
+
+		res.json reply
 
 # edit a user, accepts a urlencoded request with a "change" param and a "to" param
 # return {success: true, user: user} or {success: false, reason: "whatever"}
 async.post '/', (req, res) ->
-
 	toChange = req.body.change
 	to = req.body.to
 
@@ -163,11 +175,12 @@ async.post '/', (req, res) ->
 				req.session.user[toChange] = user[toChange]
 			reply = unless err?
 				success: true
-				user: user
+				newValue: (if toChange is "info" then marked(user[toChange]) else user[toChange])
 			else
 				util.json.fail err
 
 			res.json reply
+
 
 module.exports =
 	router: router

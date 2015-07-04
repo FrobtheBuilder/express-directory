@@ -2,7 +2,12 @@ $ ->
 	$('.edit').click ->
 		$('.info').add('.edit').hide()
 		$('.info-edit').show()
-		$('.info-box').val $('.info > p').text()
+		$.ajax
+			method: "get"
+			url: "/user/async/self"
+			datatype: "json"
+			success: (data) ->
+				$('.info-edit').val data.user.info
 
 
 	$('.submit-edit').click ->
@@ -18,7 +23,7 @@ $ ->
 				if data.success
 					$('.info-edit').hide()
 					$('.edit').show()
-					$('.info').html("<p>#{data.user.info}</p>").show()
+					$('.info').html("#{data.newValue}").show()
 				else
 					$('.alert')
 					.addClass('alert-danger')
