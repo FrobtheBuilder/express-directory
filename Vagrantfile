@@ -28,6 +28,7 @@ Vagrant.configure(2) do |config|
   config.vm.network "forwarded_port", guest: 8080, host: 8080
   config.ssh.forward_agent = true
   config.vm.provider "virtualbox" do |v|
+    #v.customize ["sharedfolder", "add", :id, "--name", "vagrant", "--hostpath", (("//?/" + File.dirname(__FILE__) + "/vagrant").gsub("/","\\"))]
     v.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/vagrant", "1"]
   end
 
@@ -78,9 +79,6 @@ Vagrant.configure(2) do |config|
       curl -s https://raw.githubusercontent.com/lovell/sharp/master/preinstall.sh | sudo bash -
       cd /vagrant
       sudo npm install -g nodemon coffee-script node-pre-gyp node-inspector
-      sudo npm install -g
-      #global because windows doesn't like deep nests
-      echo "export NODE_PATH=/usr/local/lib/node_modules" >> ~/.bashrc
-      #and fix the path to make it look like they're installed locally
+      npm install --no-bin-links #still can't make that work!
   SHELL
 end

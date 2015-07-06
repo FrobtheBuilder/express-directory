@@ -39,7 +39,8 @@ app.use session
 	secret: "ayy lmao"
 	store: (new FileStore())
 
-app.locals = _.merge app.locals, helpers
+
+app.locals = _.merge app.locals, helpers, {config: config}
 
 
 ## ROUTERS ##
@@ -51,6 +52,8 @@ app.use '/test', require './routes/test'
 
 ## ROOT ROUTE ##
 app.get '/', (req, res) ->
+	if req.session.user?
+		res.redirect '/user/browse/1'
 	res.render 'index', page: "Index"
 
 app.listen config.port, ->

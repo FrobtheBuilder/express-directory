@@ -3,7 +3,7 @@ nav.navbar.navbar-inverse.navbar-fixed-top
 		.navbar-header 
 						// ► 
 			a.navbar-brand(href="#")
-				span SimpleDirectory ∷ 
+				span= config.name + " ∷ "
 				if type === "bad"
 					span.page.text-danger=page
 				else if type === "good"
