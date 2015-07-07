@@ -53,7 +53,7 @@ app.use '/test', require './routes/test'
 ## ROOT ROUTE ##
 app.get '/', (req, res) ->
 	if req.session.user?
-		res.redirect '/user/browse/1'
+		return res.redirect '/user/browse/1'
 	res.render 'index', page: "Index"
 
 app.listen config.port, ->

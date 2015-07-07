@@ -90,7 +90,7 @@ unauthed.post '/', (req, res) ->
 # page for logged in user
 router.get '/', (req, res) ->
 	if req.session.user._id is util.anonymous._id
-		res.redirect "/"
+		return res.redirect "/"
 	model.User.findPopulated _id: req.session.user._id, (err, popUser) ->
 		if err? then util.errorOut res, err
 		res.render "#{viewDir}/index",
@@ -127,7 +127,7 @@ router.get '/id/:id', (req, res) ->
 
 router.get '/logout', (req, res) ->
 	req.session.user = null
-	res.redirect '/' #and then, ya get outta there!
+	return res.redirect '/' #and then, ya get outta there!
 
 
 ## ASYNC API ##
@@ -163,7 +163,7 @@ async.post '/', (req, res) ->
 	to = req.body.to
 
 	unless toChange in ["name", "email", "info", "password", "profilePicture"]
-		res.json(util.json.fail "attempt to change invalid attribute #{toChange}")
+		return res.json(util.json.fail "attempt to change invalid attribute #{toChange}")
 
 	model.User.findOne(_id: req.session.user._id).exec (err, user) ->
 		user[toChange] = if toChange is "password"

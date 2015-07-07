@@ -33,7 +33,7 @@ router.get '/upload', (req, res) ->
 
 router.post '/upload', (req, res) ->
 	unless req.files.picture?
-		res.render 'message', util.message.bad "No image.", "#{viewDir}/upload"
+		return res.render 'message', util.message.bad "No image.", "#{viewDir}/upload"
 
 	u = req.session.user
 	p = req.files.picture
@@ -74,7 +74,7 @@ router.post '/upload', (req, res) ->
 router.get '/id/:id', (req, res) ->
 	model.Picture.findOne(_id: req.params.id).exec (err, picture) ->
 		unless picture?
-			util.errorOut res, new Error("No Picture by that ID!")
+			return util.errorOut res, new Error("No Picture by that ID!")
 		if err? then util.errorOut res, err
 		model.Picture.findOne(_id: req.params.id)
 		.populate("_owner")
