@@ -26,12 +26,6 @@ app.use (require 'connect-assets')(build: false)
 app.use express.static(__dirname + '/public')
 app.use bodyParser.urlencoded(extended: false)
 app.use bodyParser.json()
-app.use (req, res, next) ->
-	console.log util.reqThings req
-	next()
-
-## INITIALIZATION ##
-model.connect()
 
 app.use session
 	resave: true
@@ -39,6 +33,12 @@ app.use session
 	secret: "ayy lmao"
 	store: (new FileStore())
 
+app.use (req, res, next) ->
+	console.log(util.reqThings req)
+	next()
+
+## INITIALIZATION ##
+model.connect()
 
 app.locals = _.merge app.locals, helpers, {config: config}
 
@@ -52,7 +52,7 @@ app.use '/test', require './routes/test'
 
 ## ROOT ROUTE ##
 app.get '/', (req, res) ->
-	if req.session.user?
+	if req.session.user? and not String(req.session.user._id) == "666"
 		return res.redirect '/user/browse/1'
 	res.render 'index', page: "Index"
 

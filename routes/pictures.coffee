@@ -75,7 +75,8 @@ router.get '/id/:id', (req, res) ->
 	model.Picture.findOne(_id: req.params.id).exec (err, picture) ->
 		unless picture?
 			return util.errorOut res, new Error("No Picture by that ID!")
-		if err? then util.errorOut res, err
+		if err?
+			return util.errorOut res, err
 		model.Picture.findOne(_id: req.params.id)
 		.populate("_owner")
 		.exec (err, picture) ->
