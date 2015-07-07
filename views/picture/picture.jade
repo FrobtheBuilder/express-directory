@@ -15,7 +15,7 @@ html(lang="en")
 						img.img-responsive.center-block(src="/img/"+picture.name)
 				.col-md-2
 				.col-md-8
-					if picture._owner._id == me._id
+					if me && picture._owner._id == me._id
 						.pictureID.hidden!= picture._id
 						button.btn.btn-sm.btn-link.pull-right.set Set as Profile Image...
 						.alert
