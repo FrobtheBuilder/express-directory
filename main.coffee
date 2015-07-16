@@ -4,7 +4,7 @@ bodyParser = require 'body-parser'
 session = require 'express-session'
 json = require 'express-json'
 
-config = require './config.json'
+config = require './config'
 model = require './model/model'
 util = require './util'
 multer = require 'multer'
@@ -17,7 +17,6 @@ _ = require 'lodash'
 ## SETTINGS ##
 app.set 'view engine', 'jade'
 app.set 'views', __dirname + '/views'
-
 ## GLOBAL MIDDLEWARE ##
 app.use multer
 	dest: "./public/img/"

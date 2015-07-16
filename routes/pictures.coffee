@@ -27,7 +27,6 @@ router.get '/cwd', (req, res) ->
 	console.log process.cwd()
 	res.end("hi")
 
-
 router.get '/upload', (req, res) ->
 	res.render "#{viewDir}/upload"
 
