@@ -1,4 +1,4 @@
-FROM phusion/baseimage
+FROM marcbachmann/libvips
 RUN apt-get -y update && apt-get install -y nodejs nodejs-legacy npm git pkg-config
 RUN curl -s https://raw.githubusercontent.com/lovell/sharp/master/preinstall.sh | bash -
 RUN mkdir /var/www
